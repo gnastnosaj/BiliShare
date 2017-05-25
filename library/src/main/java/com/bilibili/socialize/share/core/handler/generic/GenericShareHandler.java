@@ -19,7 +19,9 @@ package com.bilibili.socialize.share.core.handler.generic;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.net.Uri;
 
+import com.bilibili.socialize.share.R;
 import com.bilibili.socialize.share.core.SocializeMedia;
 import com.bilibili.socialize.share.core.SocializeListeners;
 import com.bilibili.socialize.share.core.BiliShareConfiguration;
@@ -62,8 +64,22 @@ public class GenericShareHandler extends BaseShareHandler {
     }
 
     @Override
-    protected void shareImage(ShareParamImage params) throws ShareException {
-        share(params);
+    protected void shareImage(final ShareParamImage params) throws ShareException {
+        final SocializeListeners.ShareListener shareListener = getShareListener();
+        mImageHelper.downloadImageIfNeed(params, new Runnable() {
+            @Override
+            public void run() {
+                Intent shareIntent = createIntent(params.getTitle(), params.getContent(), Uri.fromFile(params.getImage().getLocalFile()));
+                Intent chooser = Intent.createChooser(shareIntent, getContext().getResources().getString(R.string.bili_share_sdk_share_to));
+                try {
+                    getContext().startActivity(chooser);
+                } catch (ActivityNotFoundException ignored) {
+                    if (shareListener != null) {
+                        shareListener.onError(getShareMedia(), BiliShareStatusCode.ST_CODE_ERROR, new ShareException("activity not found"));
+                    }
+                }
+            }
+        });
     }
 
     @Override
@@ -84,7 +100,7 @@ public class GenericShareHandler extends BaseShareHandler {
     private void share(BaseShareParam param) {
         SocializeListeners.ShareListener shareListener = getShareListener();
         Intent shareIntent = createIntent(param.getTitle(), param.getContent());
-        Intent chooser = Intent.createChooser(shareIntent, "分享到：");
+        Intent chooser = Intent.createChooser(shareIntent, getContext().getResources().getString(R.string.bili_share_sdk_share_to));
         try {
             getContext().startActivity(chooser);
         } catch (ActivityNotFoundException ignored) {
@@ -92,6 +108,15 @@ public class GenericShareHandler extends BaseShareHandler {
                 shareListener.onError(getShareMedia(), BiliShareStatusCode.ST_CODE_ERROR, new ShareException("activity not found"));
             }
         }
+    }
+
+    private Intent createIntent(String subject, String text, Uri image) {
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.putExtra(Intent.EXTRA_STREAM, image);
+        intent.putExtra(Intent.EXTRA_SUBJECT, subject);
+        intent.putExtra(Intent.EXTRA_TEXT, text);
+        intent.setType("image/jpg");
+        return intent;
     }
 
     private Intent createIntent(String subject, String text) {
