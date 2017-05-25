@@ -69,7 +69,7 @@ public class GenericShareHandler extends BaseShareHandler {
         mImageHelper.downloadImageIfNeed(params, new Runnable() {
             @Override
             public void run() {
-                Intent shareIntent = createIntent(params.getTitle(), params.getContent(), Uri.fromFile(params.getImage().getLocalFile()));
+                Intent shareIntent = createIntent(params.getTitle(), params.getContent(), Uri.fromFile(params.getImage().getLocalFile()), "image/jpg");
                 Intent chooser = Intent.createChooser(shareIntent, getContext().getResources().getString(R.string.bili_share_sdk_share_to));
                 try {
                     getContext().startActivity(chooser);
@@ -110,12 +110,12 @@ public class GenericShareHandler extends BaseShareHandler {
         }
     }
 
-    private Intent createIntent(String subject, String text, Uri image) {
+    private Intent createIntent(String subject, String text, Uri stream, String type) {
         Intent intent = new Intent(Intent.ACTION_SEND);
-        intent.putExtra(Intent.EXTRA_STREAM, image);
+        intent.putExtra(Intent.EXTRA_STREAM, stream);
         intent.putExtra(Intent.EXTRA_SUBJECT, subject);
         intent.putExtra(Intent.EXTRA_TEXT, text);
-        intent.setType("image/jpg");
+        intent.setType(type);
         return intent;
     }
 
