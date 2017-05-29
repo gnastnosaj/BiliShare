@@ -69,13 +69,13 @@ public class GenericShareHandler extends BaseShareHandler {
         mImageHelper.downloadImageIfNeed(params, new Runnable() {
             @Override
             public void run() {
-                Intent shareIntent = createIntent(params.getTitle(), params.getContent(), Uri.fromFile(params.getImage().getLocalFile()), "image/jpg");
-                Intent chooser = Intent.createChooser(shareIntent, getContext().getResources().getString(R.string.bili_share_sdk_share_to));
                 try {
+                    Intent shareIntent = createIntent(params.getTitle(), params.getContent(), Uri.fromFile(params.getImage().getLocalFile()), "image/jpg");
+                    Intent chooser = Intent.createChooser(shareIntent, getContext().getResources().getString(R.string.bili_share_sdk_share_to));
                     getContext().startActivity(chooser);
-                } catch (ActivityNotFoundException ignored) {
+                } catch (Exception e) {
                     if (shareListener != null) {
-                        shareListener.onError(getShareMedia(), BiliShareStatusCode.ST_CODE_ERROR, new ShareException("activity not found"));
+                        shareListener.onError(getShareMedia(), BiliShareStatusCode.ST_CODE_ERROR, new ShareException(e.getMessage()));
                     }
                 }
             }
