@@ -44,6 +44,7 @@ import com.bilibili.socialize.share.core.shareparam.ShareParamWebPage;
  * @since 2015/10/12
  */
 public class GenericShareHandler extends BaseShareHandler {
+    private boolean disposable;
 
     public GenericShareHandler(Activity context, BiliShareConfiguration configuration) {
         super(context, configuration);
@@ -66,6 +67,8 @@ public class GenericShareHandler extends BaseShareHandler {
 
     @Override
     protected void shareImage(final ShareParamImage params) throws ShareException {
+        disposable = false;
+
         final SocializeListeners.ShareListener shareListener = getShareListener();
         final Context context = getContext();
         mImageHelper.downloadImageIfNeed(params, new Runnable() {
@@ -103,6 +106,8 @@ public class GenericShareHandler extends BaseShareHandler {
     }
 
     private void share(BaseShareParam param) {
+        disposable = true;
+
         SocializeListeners.ShareListener shareListener = getShareListener();
         Intent shareIntent = createIntent(param.getTitle(), param.getContent());
         Intent chooser = Intent.createChooser(shareIntent, getContext().getResources().getString(R.string.bili_share_sdk_share_to));
@@ -134,7 +139,7 @@ public class GenericShareHandler extends BaseShareHandler {
 
     @Override
     public boolean isDisposable() {
-        return true;
+        return disposable;
     }
 
     @Override
