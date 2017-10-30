@@ -18,6 +18,7 @@ package com.bilibili.socialize.share.core.handler.generic;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 
