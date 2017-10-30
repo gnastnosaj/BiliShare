@@ -112,7 +112,7 @@ public class BiliShare {
                 mInnerProxyListener.onStart(type);
                 mCurrentHandler.share(params, mInnerProxyListener);
 
-                if (mCurrentHandler.isDisposable()) {
+                if (mCurrentHandler != null && mCurrentHandler.isDisposable()) {
                     Log.d(TAG, "release disposable share handler");
                     release(mCurrentHandler.getShareMedia());
                 }
