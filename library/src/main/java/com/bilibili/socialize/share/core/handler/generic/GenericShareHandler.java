@@ -75,6 +75,9 @@ public class GenericShareHandler extends BaseShareHandler {
                     Intent shareIntent = createIntent(params.getTitle(), params.getContent(), Uri.fromFile(params.getImage().getLocalFile()), "image/jpg");
                     Intent chooser = Intent.createChooser(shareIntent, context.getResources().getString(R.string.bili_share_sdk_share_to));
                     context.startActivity(chooser);
+                    if (shareListener != null) {
+                        shareListener.onSuccess(getShareMedia(), BiliShareStatusCode.ST_CODE_SUCCESSED);
+                    }
                 } catch (Exception e) {
                     if (shareListener != null) {
                         shareListener.onError(getShareMedia(), BiliShareStatusCode.ST_CODE_ERROR, new ShareException(e.getMessage()));
