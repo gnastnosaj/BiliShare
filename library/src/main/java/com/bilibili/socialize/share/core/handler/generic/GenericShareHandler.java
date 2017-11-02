@@ -21,6 +21,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.text.TextUtils;
 
 import com.bilibili.socialize.share.R;
 import com.bilibili.socialize.share.core.SocializeMedia;
@@ -123,8 +124,12 @@ public class GenericShareHandler extends BaseShareHandler {
     private Intent createIntent(String subject, String text, Uri stream, String type) {
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.putExtra(Intent.EXTRA_STREAM, stream);
-        intent.putExtra(Intent.EXTRA_SUBJECT, subject);
-        intent.putExtra(Intent.EXTRA_TEXT, text);
+        if (!TextUtils.isEmpty(subject)) {
+            intent.putExtra(Intent.EXTRA_SUBJECT, subject);
+        }
+        if (!TextUtils.isEmpty(text)) {
+            intent.putExtra(Intent.EXTRA_TEXT, text);
+        }
         intent.setType(type);
         return intent;
     }

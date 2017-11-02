@@ -133,6 +133,43 @@ public class BitmapUtil {
         return be;
     }
 
+    public static File saveBitmapToExternal(Bitmap bitmap, File targetFile) {
+        if (bitmap == null || bitmap.isRecycled()) {
+            return null;
+        }
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(targetFile);
+            baos.writeTo(fos);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        } finally {
+            try {
+                baos.flush();
+                baos.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            try {
+                if (fos != null) {
+                    fos.flush();
+                    fos.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return targetFile;
+    }
+
     public static File saveBitmapToExternal(Bitmap bitmap, String targetFileDirPath) {
         if (bitmap == null || bitmap.isRecycled()) {
             return null;
